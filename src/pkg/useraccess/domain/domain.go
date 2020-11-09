@@ -1,9 +1,9 @@
 package domain
 
-import (
-	"github.com/ke-pan/modular-monolith-with-ddd-in-go/src/pkg/useraccess/domain/userregistrastion/rule"
-)
+type Rule interface {
+	Validate() error
+}
 
-func CheckRule(rule rule.Rule) error {
+func CheckRule(rule Rule) error {
 	return rule.Validate()
 }

@@ -2,20 +2,23 @@ package userregistrastion
 
 import (
 	"time"
+
+	"github.com/ke-pan/modular-monolith-with-ddd-in-go/src/pkg/useraccess/domain"
+	"github.com/ke-pan/modular-monolith-with-ddd-in-go/src/pkg/useraccess/domain/user"
 )
 
-type UserRegistrationID string
+type ID string
 
-type UserRegistrationStatus uint8
+type Status uint8
 
 const (
-	UserRegistrationStatusWaitingForConfirm UserRegistrationStatus = 1
-	UserRegistrationStatusConfirmed         UserRegistrationStatus = 2
-	UserRegistrationStatusExpired           UserRegistrationStatus = 3
+	StatusWaitingForConfirm Status = 1
+	StatusConfirmed         Status = 2
+	StatusExpired           Status = 3
 )
 
 type UserRegistration struct {
-	ID           UserRegistrationID
+	ID           ID
 	login        string
 	password     string
 	email        string
@@ -23,6 +26,13 @@ type UserRegistration struct {
 	lastName     string
 	name         string
 	registerDate time.Time
-	status       UserRegistrationStatus
+	status       Status
 	confirmDate  time.Time
+}
+
+func (ur UserRegistration) CreateUser() (user.User, error) {
+	if err := domain.CheckRule(UserCannotBeCreatedWhenRegistrationIsNotConfirmed(ur.status)); err != nil {
+		return user.User{}, err
+	}
+	return user.CreateFromUserRegistration(user.ID(ur.ID), ur.login, ur.password, ur.email, ur.firstName, ur.lastName, ur.name)
 }

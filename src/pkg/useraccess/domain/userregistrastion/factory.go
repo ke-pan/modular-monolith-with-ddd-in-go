@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/ke-pan/modular-monolith-with-ddd-in-go/src/pkg/useraccess/domain"
-	"github.com/ke-pan/modular-monolith-with-ddd-in-go/src/pkg/useraccess/domain/userregistrastion/rule"
 )
 
 type Factory struct {
@@ -25,11 +24,11 @@ func NewFactory(genID func() string, genCurrentTime func() time.Time) *Factory {
 }
 
 func (f Factory) RegisterNewUser(login, password, email, firstName, lastName, confirmLink string, countUserWithLogin func(string) int) (UserRegistration, error) {
-	if err := domain.CheckRule(rule.UserLoginMustBeUnique(countUserWithLogin, login)); err != nil {
+	if err := domain.CheckRule(UserLoginMustBeUnique(countUserWithLogin, login)); err != nil {
 		return UserRegistration{}, err
 	}
 	return UserRegistration{
-		ID:           UserRegistrationID(f.genID()),
+		ID:           ID(f.genID()),
 		login:        login,
 		password:     password,
 		email:        email,
@@ -37,7 +36,7 @@ func (f Factory) RegisterNewUser(login, password, email, firstName, lastName, co
 		lastName:     lastName,
 		name:         firstName + " " + lastName,
 		registerDate: f.genCurrentTime(),
-		status:       UserRegistrationStatusWaitingForConfirm,
+		status:       StatusWaitingForConfirm,
 		confirmDate:  f.genCurrentTime(),
 	}, nil
 }

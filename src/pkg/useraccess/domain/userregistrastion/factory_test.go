@@ -50,7 +50,7 @@ func TestFactory_RegisterNewUser(t *testing.T) {
 				},
 			},
 			want: UserRegistration{
-				ID:           UserRegistrationID("id"),
+				ID:           ID("id"),
 				login:        "john",
 				password:     "2df92ndkuhy",
 				email:        "john@email.com",
@@ -58,7 +58,7 @@ func TestFactory_RegisterNewUser(t *testing.T) {
 				lastName:     "smith",
 				name:         "john smith",
 				registerDate: time.Unix(1560000, 0),
-				status:       UserRegistrationStatusWaitingForConfirm,
+				status:       StatusWaitingForConfirm,
 				confirmDate:  time.Unix(1560000, 0),
 			},
 			wantErr: false,
