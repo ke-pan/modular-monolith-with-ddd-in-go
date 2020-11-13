@@ -85,3 +85,79 @@ func TestUserRegistration_CreateUser(t *testing.T) {
 		})
 	}
 }
+
+func TestUserRegistration_Confirm(t *testing.T) {
+	type fields struct {
+		status Status
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   Status
+		err    error
+	}{
+		{
+			name:   "success",
+			fields: fields{status: StatusWaitingForConfirm},
+			want:   StatusConfirmed,
+			err:    nil,
+		},
+		{
+			name:   "registration can not be confirmed more than once",
+			fields: fields{status: StatusConfirmed},
+			want:   StatusConfirmed,
+			err:    ErrUserRegistrationCannotBeConfirmedMoreThanOnce,
+		},
+		{
+			name:   "registration can not be confirmed after expired",
+			fields: fields{status: StatusExpired},
+			want:   StatusExpired,
+			err:    ErrUserRegistrationCannotBeConfirmedAfterExpired,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ur := &UserRegistration{
+				status: tt.fields.status,
+			}
+			err := ur.Confirm()
+			assert.Equal(t, err, tt.err)
+			assert.Equal(t, ur.status, tt.want)
+		})
+	}
+}
+
+func TestUserRegistration_Expire(t *testing.T) {
+	type fields struct {
+		status Status
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    Status
+		wantErr error
+	}{
+		{
+			name:    "success",
+			fields:  fields{status: StatusConfirmed},
+			want:    StatusExpired,
+			wantErr: nil,
+		},
+		{
+			name:    "registration cannot be expired more than once",
+			fields:  fields{status: StatusExpired},
+			want:    StatusExpired,
+			wantErr: ErrUserRegistrationCannotBeExpiredMoreThanOnce,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ur := &UserRegistration{
+				status: tt.fields.status,
+			}
+			err := ur.Expire()
+			assert.Equal(t, err, tt.wantErr)
+			assert.Equal(t, ur.status, tt.want)
+		})
+	}
+}

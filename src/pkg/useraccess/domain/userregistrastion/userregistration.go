@@ -36,3 +36,23 @@ func (ur UserRegistration) CreateUser() (user.User, error) {
 	}
 	return user.CreateFromUserRegistration(user.ID(ur.ID), ur.login, ur.password, ur.email, ur.firstName, ur.lastName, ur.name)
 }
+
+func (ur *UserRegistration) Confirm() error {
+	if err := domain.CheckRule(UserRegistrationCannotBeConfirmedMoreThanOnce(ur.status)); err != nil {
+		return err
+	}
+	if err := domain.CheckRule(UserRegistrationCannotBeConfirmedAfterExpired(ur.status)); err != nil {
+		return err
+	}
+	ur.status = StatusConfirmed
+	ur.confirmDate = time.Now()
+	return nil
+}
+
+func (ur *UserRegistration) Expire() error {
+	if err := domain.CheckRule(UserRegistrationCannotBeExpiredMoreThanOnce(ur.status)); err != nil {
+		return err
+	}
+	ur.status = StatusExpired
+	return nil
+}
