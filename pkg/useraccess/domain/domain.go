@@ -1,5 +1,7 @@
 package domain
 
+type ID string
+
 type Rule interface {
 	Validate() error
 }

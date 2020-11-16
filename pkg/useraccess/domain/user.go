@@ -1,6 +1,4 @@
-package user
-
-type ID string
+package domain
 
 type Role uint8
 

@@ -1,4 +1,4 @@
-package user
+package domain
 
 func CreateFromUserRegistration(id ID, login, password, email, firstName, lastName, name string) (User, error) {
 	return User{

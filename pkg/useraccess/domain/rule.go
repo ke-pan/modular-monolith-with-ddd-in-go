@@ -1,4 +1,4 @@
-package userregistrastion
+package domain
 
 import (
 	"errors"

@@ -1,10 +1,9 @@
-package userregistrastion
+package domain
 
 import (
 	"testing"
 	"time"
 
-	"github.com/ke-pan/modular-monolith-with-ddd-in-go/src/pkg/useraccess/domain/user"
 	"github.com/magiconair/properties/assert"
 )
 
@@ -24,7 +23,7 @@ func TestUserRegistration_CreateUser(t *testing.T) {
 	var tests = []struct {
 		name       string
 		fields     fields
-		wantUserID user.ID
+		wantUserID ID
 		wantErr    error
 	}{
 		{
