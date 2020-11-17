@@ -8,6 +8,7 @@ import (
 
 type UserRegistrationRepository interface {
 	GetByID(domain.ID) (domain.UserRegistration, error)
+	Add(registration domain.UserRegistration) error
 }
 
 type PasswordManager interface {
@@ -37,5 +38,14 @@ type RegisterNewUserCommand struct {
 func (h UserRegistrationHandler) RegisterNewUser(ctx context.Context, command *RegisterNewUserCommand) (domain.UserRegistration, error) {
 	password := h.passwordManager.HashPassword(command.Password)
 
-	return h.factory.RegisterNewUser(command.Login, password, command.Email, command.FirstName, command.LastName, command.ConfirmLink, h.userCounter)
+	ur, err := h.factory.RegisterNewUser(command.Login, password, command.Email, command.FirstName, command.LastName, command.ConfirmLink, h.userCounter)
+	if err != nil {
+		return domain.UserRegistration{}, err
+	}
+
+	if err := h.repo.Add(ur); err != nil {
+		return domain.UserRegistration{}, err
+	}
+
+	return ur, nil
 }
